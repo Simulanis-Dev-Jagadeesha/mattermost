@@ -1,10 +1,5 @@
 pipeline {
     agent any
-
-    environment {
-        DOCKER_IMAGE = 'mattermost-app'
-    }
-
     stages {
         stage('Clone Repository') {
             steps {
@@ -14,21 +9,16 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    docker.build("${env.DOCKER_IMAGE}")
+                    docker.build('mattermost-app')
                 }
             }
         }
         stage('Run Docker Container') {
             steps {
                 script {
-                    def app = docker.run("${env.DOCKER_IMAGE}", "-p 8065:8065")
+                    docker.image('mattermost-app').run('-d -p 8065:8065')
                 }
             }
-        }
-    }
-    post {
-        always {
-            cleanWs()
         }
     }
 }
